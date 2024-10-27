@@ -13,7 +13,7 @@ struct ProfileView: View {
             // no title for this section
             Section{
                 HStack {
-                    Text("MJ")
+                    Text(User.MOCK_USER.initials)
                         .font(.title)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -21,13 +21,14 @@ struct ProfileView: View {
                         .background(Color(.systemGray3))
                         .clipShape(.circle)
                     VStack(alignment: .leading, spacing: 4){
-                        Text("Michael Jordan")
+                        Text(User.MOCK_USER.fullName)
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .padding(.top, 4)
-                        Text("test@gmail.com")
+                        Text(User.MOCK_USER.email)
                             .font(.footnote)
-                            .accentColor(.gray) // because it recognizes it as an email
+                            .accentColor(.gray) // because it recognizes it as an email, only works with a direct string, not with a variable/parameter
+                            .foregroundColor(.gray)
                     }
                 }
 
