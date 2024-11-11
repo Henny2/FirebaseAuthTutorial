@@ -14,14 +14,15 @@ import FirebaseFirestore
 // sending info/updates to the Views
 // handling erros when sing in
 
-
+@MainActor // publihsing updates for @Published needs to happen on main thread, that is why we are setting this
 // observable object - our view is gonna be able to observe changes to AuthViewModel
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User? // gonna tell us whether we have a user logged in or not
     @Published var currentUser: User?
     
     init() {
-        
+        // functionality we get from firebase, they cache who is logged in on the dcvice, we don't have to specifically save that
+        self.userSession = Auth.auth().currentUser
     }
     
     func signIn(withEmail email: String, password: String) async throws {
