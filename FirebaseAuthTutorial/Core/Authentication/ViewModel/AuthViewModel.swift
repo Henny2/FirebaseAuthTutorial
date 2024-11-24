@@ -10,6 +10,10 @@ import FirebaseAuth
 import Firebase
 import FirebaseFirestore
 
+protocol AuthenticationFormProtocol {
+    var formIsValid: Bool {get}
+}
+
 // responsible for having all functionlity with authenticating the user, i.e. making the API calls
 // sending info/updates to the Views
 // handling erros when sing in
