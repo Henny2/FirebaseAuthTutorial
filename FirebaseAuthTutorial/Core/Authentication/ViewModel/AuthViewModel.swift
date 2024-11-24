@@ -21,8 +21,13 @@ class AuthViewModel: ObservableObject {
     @Published var currentUser: User?
     
     init() {
-        // functionality we get from firebase, they cache who is logged in on the dcvice, we don't have to specifically save that
+        // functionality we get from firebase, they cache who is logged in on the device, we don't have to specifically save that
         self.userSession = Auth.auth().currentUser
+        
+        // trying to fetch user data right away
+        Task {
+            await fetchUser()
+        }
     }
     
     func signIn(withEmail email: String, password: String) async throws {
@@ -35,7 +40,9 @@ class AuthViewModel: ObservableObject {
             self.userSession = result.user
             let user = User(id: result.user.uid, fullName: fullName, email: email)
             let encodedUser = try Firestore.Encoder().encode(user)
+            // uploading data to firestore database
             try await Firestore.firestore().collection("users").document(user.id).setData(encodedUser)
+            await fetchUser() // fetching the data we just uploaded
         } catch {
             print("DEBUG: Failed to create user with error \(error.localizedDescription)")
         }
@@ -47,8 +54,15 @@ class AuthViewModel: ObservableObject {
     func deleteAccount(){
         print("detele account...")
     }
-    func fetchUserData() async {
-        print("fetch data")
+    
+    
+    func fetchUser() async {
+        guard let uid =  Auth.auth().currentUser?.uid else { return }
+        guard let snapshot = try? await Firestore.firestore().collection("users").document(uid).getDocument() else { return }// using try? to not have to handle the error, but we could do a do catch block
+        let user = try? snapshot.data(as: User.self)
+        self.currentUser = user // setting current user to be the user
+        
+        print("DEBUG: Current user is \(self.currentUser)")
     }
 }
 
